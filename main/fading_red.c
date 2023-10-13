@@ -1,1 +1,0 @@
-//Initial status (RED LED fading)

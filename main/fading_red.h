@@ -1,1 +1,3 @@
-//Initial status (RED LED fading)
+//Red LED fading status.
+void pulse();
+void reset_pulse();
