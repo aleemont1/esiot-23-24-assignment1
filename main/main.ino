@@ -10,10 +10,9 @@ unsigned long T3 = N_LED * T2;  //Delay massimo per partita
 
 void setup() {
   Serial.begin(9600);
-  pinMode(LR,OUTPUT);   
+  init_game();
   for(int i = 0; i < N_LED; i++) {
     pinMode(buttons[i],INPUT);
-    pinMode(leds[i],OUTPUT);
   }
 }
 
