@@ -1,6 +1,5 @@
 #include "constants.h"
 #include "game_starter.h"
-#include "fading_red.h"
 
 int buttons[4] =  {B1,B2,B3,B4};
 int leds[4] = {L1,L2,L3,L4};
@@ -20,6 +19,5 @@ void setup() {
 }
 
 void loop() {
-  delay(T1);
-  
+  initial_state();
 }
