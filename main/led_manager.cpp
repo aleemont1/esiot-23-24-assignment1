@@ -3,7 +3,7 @@
 #include "led_manager.h"
 #include "constants.h"
 
-int leds[4] = {L1,L2,L3,L4};
+const uint8_t leds[4] = {L1,L2,L3,L4};
 
 /**
  * Inizializza la board di LED, settando i pin in OUTPUT mode.
