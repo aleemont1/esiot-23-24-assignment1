@@ -7,6 +7,15 @@
 
 int game_state = INIT_GAME;
 long time_in_state = 0;
+
+/**
+ * Cambia lo stato del sistema.
+*/
+void switch_game_state(const int STATE) {
+    game_state = STATE;
+    time_in_state = millis();
+}
+
 /**
  * Inizializza la board
  * Spegne tutti i LED
@@ -18,11 +27,6 @@ void init_game() {
     reset_board();
     reset_pulse();
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
-}
-
-void switch_game_state(const int STATE) {
-    game_state = STATE;
-    time_in_state = millis();
 }
 
 /**
