@@ -5,15 +5,16 @@
 #include "fading_red.h"
 #include "led_manager.h"
 
-int game_state = INIT_GAME;
-long time_in_state = 0;
+int game_state = INIT_GAME;     //Stato attuale della partita
+long initial_time_in_state = 0; //Tempo all'inizio dello stato
+long elapsed_time_in_state = 0; //Tempo passato dall'inizio dello stato
 
 /**
  * Cambia lo stato del sistema.
 */
 void switch_game_state(const int STATE) {
     game_state = STATE;
-    time_in_state = millis();
+    initial_time_in_state = millis();
 }
 
 /**
@@ -27,6 +28,7 @@ void init_game() {
     reset_board();
     reset_pulse();
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
+    switch_game_state(INITIAL_STATE);
 }
 
 /**
@@ -35,5 +37,19 @@ void init_game() {
 */
 void initial_state() {
     pulse();
+    /**
+     * if(button_1 is pressed):
+     *      switch_game_state(START_GAME)
+    */
+   /**
+    * if(elapsed_time > 10 secondi):
+    *       switch_game_state(SLEEP)
+   */
 }
 
+/**
+ * Aggiorna il temmpo ad ogni iterazione del loop.
+*/
+void update_time() {
+    elapsed_time_in_state = millis() - initial_time_in_state;
+}
