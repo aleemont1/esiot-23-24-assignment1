@@ -1,1 +1,6 @@
-//Buttons manager, in this module all button's function
+//Buttons manager, in this module all button's functions
+void init_buttons();
+void start_game();
+void button_handler(const uint8_t B);
+
+
