@@ -38,14 +38,22 @@ void init_game() {
 void initial_state() {
     pulse();
     /**
-     * if(button_1 is pressed):
-     *      switch_game_state(START_GAME)
+     * switch_game_state(WAITING_TO_START_STATE);
     */
-   /**
-    * if(elapsed_time > 10 secondi):
-    *       switch_game_state(SLEEP)
-   */
 }
+
+ /**
+    * function waiting_to_start_state():
+    *   if(button_1 is pressed) then:
+    *      switch_game_state(START_GAME)
+    *
+    *   endif
+    *   if(elapsed_time > 10 secondi) then:
+    *       switch_game_state(SLEEP)
+    *   endif
+    * end_function
+    * 
+   */
 
 /**
  * Aggiorna il temmpo ad ogni iterazione del loop.
