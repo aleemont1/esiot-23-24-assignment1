@@ -8,5 +8,6 @@
 
 void init_game();
 void initial_state();
+void sleeping_state();
 void switch_game_state(const int STATE);
 void update_time();

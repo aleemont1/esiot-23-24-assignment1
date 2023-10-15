@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "fading_red.h"
 #include "led_manager.h"
+#include <avr/sleep.h>
 
 int game_state = INIT_GAME;     //Stato attuale della partita
 long initial_time_in_state = 0; //Tempo all'inizio dello stato
@@ -54,6 +55,18 @@ void initial_state() {
     * end_function
     * 
    */
+
+void sleeping_state() {
+    #ifdef __DEBUG
+    Serial.print("Going to sleep. Time: ");
+    Serial.println(elapsed_time_in_state);
+    #endif
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    sleep_enable();
+    sleep_mode();
+    sleep_disable();
+    switch_game_state(INIT_GAME);
+}
 
 /**
  * Aggiorna il temmpo ad ogni iterazione del loop.
