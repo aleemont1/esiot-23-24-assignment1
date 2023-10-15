@@ -30,9 +30,6 @@ void init_board() {
         pinMode(leds[i],OUTPUT);
     }
     pinMode(LR,OUTPUT);
-    #ifdef __DEBUG
-    test_leds();
-    #endif
 }
 
 /**
