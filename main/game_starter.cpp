@@ -28,7 +28,9 @@ void init_game() {
     init_board();
     reset_board();
     reset_pulse();
+    Serial.begin(9600);
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
+    Serial.end();
     switch_game_state(INITIAL_STATE);
 }
 
@@ -38,6 +40,9 @@ void init_game() {
 */
 void initial_state() {
     pulse();
+    if(elapsed_time_in_state > 10000) {
+        switch_game_state(SLEEPING_STATE);
+    }
     /**
      * switch_game_state(WAITING_TO_START_STATE);
     */
@@ -58,9 +63,12 @@ void initial_state() {
 
 void sleeping_state() {
     #ifdef __DEBUG
+    Serial.begin(9600);
     Serial.print("Going to sleep. Time: ");
     Serial.println(elapsed_time_in_state);
+    Serial.end();
     #endif
+    reset_pulse();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
     sleep_mode();
@@ -74,3 +82,9 @@ void sleeping_state() {
 void update_time() {
     elapsed_time_in_state = millis() - initial_time_in_state;
 }
+
+#ifdef __DEBUG
+void test() {
+    test_leds();
+}
+#endif
