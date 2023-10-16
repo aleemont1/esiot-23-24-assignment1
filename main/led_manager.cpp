@@ -6,7 +6,7 @@
 
 const uint8_t leds[4] = {L1,L2,L3,L4};
 
-#ifdef __DEBUG
+#ifdef __TEST
 void test_leds() {
     for(int i = 0; i < N_LED; i++) {
         digitalWrite(leds[i], HIGH);
