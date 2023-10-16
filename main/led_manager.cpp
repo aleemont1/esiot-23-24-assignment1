@@ -33,6 +33,21 @@ void init_board() {
 }
 
 /**
+ * Permuta l'array leds. (Fisher-Yates shuffle algorithm)
+ * Returns: Una copia dell'array leds, permutata.
+*/
+uint8_t* generate_led_pattern() {
+    srand((unsigned int)time(NULL));
+    uint8_t pattern[N_LED];  
+    for (int i = 0; i < N_LED; i++) {
+        // Genera un indice j tra 0 e i+1
+        unsigned int j = rand() % (i + 1);
+        pattern[j] = leds[i];
+    }
+    return pattern;
+}
+
+/**
  * Spegne l'i-esimo LED verde.
 */
 void turn_off(const int LED) {
