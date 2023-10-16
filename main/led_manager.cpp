@@ -33,6 +33,24 @@ void init_board() {
 }
 
 /**
+ * Spegne l'i-esimo LED verde.
+*/
+void turn_off(const int LED) {
+    if(digitalRead(leds[i]) == HIGH) {
+        digitalWrite(leds[i], LOW);
+    }
+}
+
+/**
+ * Accende l'i-esimo LED verde.
+*/
+void turn_on(cons int LED) {
+    if(digitalRead(leds[i]) == LOW) {
+        digitalWrite(leds[i], HIGH);
+    }
+}
+
+/**
  * Spegne tutti i LED verdi.
 */
 void reset_board() {
