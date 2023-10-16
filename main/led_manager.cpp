@@ -67,21 +67,17 @@ uint8_t* generate_led_pattern() {
 }
 
 /**
- * Spegne l'i-esimo LED verde.
+ * Spegne il LED verde indicato.
 */
 void turn_off(const int LED) {
-    if(digitalRead(leds[LED]) == HIGH) {
-        digitalWrite(leds[LED], LOW);
-    }
+    digitalWrite(LED, LOW);
 }
 
 /**
- * Accende l'i-esimo LED verde.
+ * Accende il LED verde indicato.
 */
 void turn_on(const int LED) {
-    if(digitalRead(leds[LED]) == LOW) {
-        digitalWrite(leds[LED], HIGH);
-    }
+    digitalWrite(LED, HIGH);
 }
 
 /**
