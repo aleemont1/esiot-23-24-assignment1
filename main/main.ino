@@ -31,6 +31,9 @@ void loop() {
     case INITIAL_STATE:
       initial_state();
       break;
+    case GAME_STARTED_STATE:
+      game_started_state();
+      break;
     case SLEEPING_STATE:
       sleeping_state();
       break;
