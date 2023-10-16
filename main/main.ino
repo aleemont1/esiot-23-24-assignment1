@@ -7,7 +7,7 @@ extern int game_state;
 
 void setup() {
   init_game();
-  #ifdef __DEBUG
+  #ifdef __TEST
   test();
   #endif
   switch_game_state(INIT_GAME);

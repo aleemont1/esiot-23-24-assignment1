@@ -34,35 +34,33 @@ void init_board() {
 }
 
 /**
- * FIX: NON FUNZIONA. Probabilmente un errore di gestione dei puntatori. Per ora ritorna una copia
- *      di leds.
- * Permuta l'array leds. (Fisher-Yates shuffle algorithm)
+ * FIX: Genera sempre gli stessi pattern (quando resetti Arduino) in quanto Arduino non ha un RTC.
+ * Permuta l'array leds. (Fisher-Yates shuffle algorithm modificato)
  * Returns: Una copia dell'array leds, permutata.
 */
 uint8_t* generate_led_pattern() {
-    srand((unsigned int)time(NULL));
-    uint8_t* pattern = (uint8_t*)malloc(N_LED * sizeof(uint8_t));
-    pattern = leds;
-    /**if (pattern == NULL) {
-        // Gestione dell'errore se l'allocazione di memoria fallisce
-        #ifdef __DEBUG
-        Serial.println("ERROR IN pattern malloc");
-        #endif
-        return NULL;
+    uint8_t *pattern = (uint8_t*)malloc(N_LED * sizeof(uint8_t));;
+    uint8_t available[N_LED];
+    
+    for (int i = 0; i < N_LED; i++) {
+        available[i] = i;  // Indici disponibili (per evitare ripetizioni)
     }
-    for (int i = N_LED - 1; i > 0; i--) {
-        // Genera un indice j tra 0 e i+1
-        unsigned int j = rand() % (i + 1);
-        pattern[i] = leds[j];
+
+    for (int i = 0; i < N_LED; i++) {
+        unsigned int j = random(0, N_LED - i);
+        pattern[i] = leds[available[j]];  //Prendi un indice random tra quelli disponibili e assegnane il led corrispondente a pattern.
+        available[j] = available[N_LED - i - 1];  // Rimpiazza l'indice usato con l'ultimo indice disponibile.
     }
     #ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("PATTERN: ");
     for(int i = 0; i < N_LED; i++) {
-        Serial.print("PATTERN[");
-        Serial.print(i);
-        Serial.print("]: ");
-        Serial.println(pattern[i]);
+        Serial.print(pattern[i]);
+        Serial.print(" ");
     }
-    #endif*/
+    Serial.println();
+    Serial.end();
+    #endif
     return pattern;
 }
 

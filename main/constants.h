@@ -16,5 +16,7 @@
 //PIN Potenziometro
 #define POT A0 
 
-//DEBUG: Enable for advanced logging and LED testing.
+//DEBUG: Enable for advanced logging.
 #define __DEBUG
+//TEST: Enable for advanced testing.
+//#define __TEST

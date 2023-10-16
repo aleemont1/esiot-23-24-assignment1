@@ -74,24 +74,20 @@ void game_started_state() {
     const uint8_t *PATTERN = generate_led_pattern();
 
     #ifdef __DEBUG
-    Serial.println("Starting game...");
     Serial.begin(9600);
-    Serial.print("GENERATED PATTERN: ");
-    for(int i = 0; i < N_LED; i++) {
-        Serial.print(PATTERN[i]);
-        Serial.print(" ");
-    }
-    Serial.println();
+    Serial.println("Starting game...");
     Serial.end();
     #endif
 
-    reset_pulse();
-    reset_board();
-    delay(T3);
+    reset_pulse();      //Il LED rosso potrebbe restare acceso.
+    reset_board();      //Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
+
+    delay(T1);
     for(int i = 0; i < N_LED; i++) {
         turn_on(PATTERN[i]);
         delay(T2);
     }
+    free(PATTERN);      //DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN!
     switch_game_state(SLEEPING_STATE);
 }
 
@@ -122,7 +118,11 @@ void update_time() {
     elapsed_time_in_state = millis() - initial_time_in_state;
 }
 
-#ifdef __DEBUG
+/**
+ * Testa le varie componenti del sistema nella fase di setup.
+ * Da integrare con ulteriori funzioni di test.
+*/
+#ifdef __TEST
 void test() {
     test_leds();
 }
