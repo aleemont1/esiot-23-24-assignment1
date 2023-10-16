@@ -16,5 +16,11 @@
 //PIN Potenziometro
 #define POT A0 
 
+//Parametri di gioco
+int F = 0;  //Moltiplicatore velocità di gioco
+unsigned long T1 = random(MIN_DELAY,MAX_DELAY); //Delay random inizio partita
+unsigned long T2 250;     //Delay spegnimento singolo LED
+unsigned long T3 = N_LED * T2;  //Delay massimo per partita
+
 //DEBUG: Enable for advanced logging and LED testing.
 #define __DEBUG
