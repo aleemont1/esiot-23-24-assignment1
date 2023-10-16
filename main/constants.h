@@ -15,3 +15,6 @@
 #define LR 6
 //PIN Potenziometro
 #define POT A0 
+
+//DEBUG: Enable for advanced logging and LED testing.
+#define __DEBUG
