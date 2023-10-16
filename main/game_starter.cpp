@@ -10,6 +10,12 @@ int game_state = INIT_GAME;     //Stato attuale della partita
 long initial_time_in_state = 0; //Tempo all'inizio dello stato
 long elapsed_time_in_state = 0; //Tempo passato dall'inizio dello stato
 
+//Parametri di gioco
+int F = 0;  //Moltiplicatore velocità di gioco
+unsigned long T1 = random(MIN_DELAY,MAX_DELAY); //Delay random inizio partita
+unsigned long T2 = 250;     //Delay spegnimento singolo LED
+unsigned long T3 = N_LED * T2;  //Delay massimo per partita
+
 /**
  * Cambia lo stato del sistema.
 */
@@ -61,20 +67,38 @@ void initial_state() {
     * 
    */
 
+/**
+ * Accende i LED verdi seguendo il pattern generato
+*/
 void game_started_state() {
-    const uint8_t PATTERN[N_LED] = generate_led_pattern();
+    const uint8_t *PATTERN = generate_led_pattern();
+
     #ifdef __DEBUG
+    Serial.println("Starting game...");
     Serial.begin(9600);
     Serial.print("GENERATED PATTERN: ");
-    Serial.println(PATTERN);
+    for(int i = 0; i < N_LED; i++) {
+        Serial.print(PATTERN[i]);
+        Serial.print(" ");
+    }
+    Serial.println();
+    Serial.end();
     #endif
+
+    reset_pulse();
+    reset_board();
     delay(T3);
     for(int i = 0; i < N_LED; i++) {
-        turn_on(PATTERN[i]-1);
+        turn_on(PATTERN[i]);
         delay(T2);
     }
+    switch_game_state(SLEEPING_STATE);
 }
 
+/**
+ * TODO: Rivedere. Implementato solo a scopo di test.
+ * Sleeping state
+*/
 void sleeping_state() {
     #ifdef __DEBUG
     Serial.begin(9600);
@@ -83,6 +107,7 @@ void sleeping_state() {
     Serial.end();
     #endif
     reset_pulse();
+    reset_board();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
     sleep_mode();
