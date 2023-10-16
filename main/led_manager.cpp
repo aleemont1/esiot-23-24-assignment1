@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "led_manager.h"
 #include "constants.h"
+#include <time.h>
 
 const uint8_t leds[4] = {L1,L2,L3,L4};
 
@@ -33,17 +34,35 @@ void init_board() {
 }
 
 /**
+ * FIX: NON FUNZIONA. Probabilmente un errore di gestione dei puntatori. Per ora ritorna una copia
+ *      di leds.
  * Permuta l'array leds. (Fisher-Yates shuffle algorithm)
  * Returns: Una copia dell'array leds, permutata.
 */
 uint8_t* generate_led_pattern() {
     srand((unsigned int)time(NULL));
-    uint8_t pattern[N_LED];  
-    for (int i = 0; i < N_LED; i++) {
+    uint8_t* pattern = (uint8_t*)malloc(N_LED * sizeof(uint8_t));
+    pattern = leds;
+    /**if (pattern == NULL) {
+        // Gestione dell'errore se l'allocazione di memoria fallisce
+        #ifdef __DEBUG
+        Serial.println("ERROR IN pattern malloc");
+        #endif
+        return NULL;
+    }
+    for (int i = N_LED - 1; i > 0; i--) {
         // Genera un indice j tra 0 e i+1
         unsigned int j = rand() % (i + 1);
-        pattern[j] = leds[i];
+        pattern[i] = leds[j];
     }
+    #ifdef __DEBUG
+    for(int i = 0; i < N_LED; i++) {
+        Serial.print("PATTERN[");
+        Serial.print(i);
+        Serial.print("]: ");
+        Serial.println(pattern[i]);
+    }
+    #endif*/
     return pattern;
 }
 
@@ -51,17 +70,17 @@ uint8_t* generate_led_pattern() {
  * Spegne l'i-esimo LED verde.
 */
 void turn_off(const int LED) {
-    if(digitalRead(leds[i]) == HIGH) {
-        digitalWrite(leds[i], LOW);
+    if(digitalRead(leds[LED]) == HIGH) {
+        digitalWrite(leds[LED], LOW);
     }
 }
 
 /**
  * Accende l'i-esimo LED verde.
 */
-void turn_on(cons int LED) {
-    if(digitalRead(leds[i]) == LOW) {
-        digitalWrite(leds[i], HIGH);
+void turn_on(const int LED) {
+    if(digitalRead(leds[LED]) == LOW) {
+        digitalWrite(leds[LED], HIGH);
     }
 }
 
