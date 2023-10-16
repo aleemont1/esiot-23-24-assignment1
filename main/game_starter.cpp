@@ -41,7 +41,7 @@ void init_game() {
 void initial_state() {
     pulse();
     if(elapsed_time_in_state > 10000) {
-        switch_game_state(SLEEPING_STATE);
+        switch_game_state(GAME_STARTED_STATE);
     }
     /**
      * switch_game_state(WAITING_TO_START_STATE);
@@ -60,6 +60,20 @@ void initial_state() {
     * end_function
     * 
    */
+
+void game_started_state() {
+    const uint8_t PATTERN[N_LED] = generate_led_pattern();
+    #ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("GENERATED PATTERN: ");
+    Serial.println(PATTERN);
+    #endif
+    delay(T3);
+    for(int i = 0; i < N_LED; i++) {
+        turn_on(PATTERN[i]-1);
+        delay(T2);
+    }
+}
 
 void sleeping_state() {
     #ifdef __DEBUG
