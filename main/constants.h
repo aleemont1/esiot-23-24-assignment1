@@ -3,6 +3,7 @@
 #define N_LED 4
 // PIN Pulsanti
 #define B1 2
+
 #define B2 3
 #define B3 4
 #define B4 5

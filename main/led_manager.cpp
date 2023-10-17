@@ -37,6 +37,7 @@ void init_board()
         pinMode(leds[i], OUTPUT);
     }
     pinMode(LR, OUTPUT);
+
 }
 
 /**

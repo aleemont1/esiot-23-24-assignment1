@@ -6,7 +6,7 @@ extern int game_state;
 
 void setup()
 {
-//  init_game();
+initial_setup();
 #ifdef __TEST
   test();
 #endif
@@ -19,7 +19,7 @@ void loop()
   switch (game_state)
   {
   case INIT_GAME:
-    init_game();
+    init_game(); /*Sicuro vada qui? l'inizializzazione del gioco dovrebbe essere fatta solo una volta, all'inizio del gioco*/
     break;
   case INITIAL_STATE:
     initial_state();

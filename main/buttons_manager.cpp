@@ -12,3 +12,7 @@ void init_buttons()
         pinMode(BTNS[i], INPUT);
     }
 }
+
+void button_handler(const int B) {
+
+}
