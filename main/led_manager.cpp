@@ -86,3 +86,12 @@ void reset_board() {
         digitalWrite(leds[i],LOW);
     }
 }
+
+/**
+ * Accende tutti i LED verdi
+*/
+void turn_on_board() {
+    for(int i = 0; i < N_LED; i++) {
+        turn_on(leds[i]);
+    }
+}
