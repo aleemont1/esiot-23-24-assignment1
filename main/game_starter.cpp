@@ -81,14 +81,14 @@ void game_started_state() {
 
     reset_pulse();      //Il LED rosso potrebbe restare acceso.
     reset_board();      //Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
-
-    delay(T1);
+    turn_on_board();    //Accendo tutti i LED verdi.
+    delay(T1);          //Prima di iniziare a spegnere i LED aspetto un tempo T1.
     for(int i = 0; i < N_LED; i++) {
-        turn_on(PATTERN[i]);
-        delay(T2);
+        delay(T2);      //Ogni LED si spegne dopo un tempo T2.
+        turn_off(PATTERN[i]);   //Spengo i LED secondo il pattern generato.
     }
-    free(PATTERN);      //DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN!
-    switch_game_state(SLEEPING_STATE);
+    free(PATTERN);      /** TODO: DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN (L'UTENTE GIOCA)! */
+    switch_game_state(SLEEPING_STATE);      /** TODO: DA RIMUOVERE */
 }
 
 /**
