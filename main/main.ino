@@ -1,8 +1,7 @@
 #include "constants.h"
 #include "game_starter.h"
-#include "buttons_manager.h"
+#include "buttons_manager.h" //Dovrebbe essere spostato in game_starter.cpp
 
-extern long elapsed_time_in_state;
 extern int game_state;
 
 void setup()
@@ -17,15 +16,6 @@ void setup()
 void loop()
 {
   update_time();
-#ifdef __DEBUG
-  Serial.begin(9600);
-  Serial.print("Current time: ");
-  Serial.print(elapsed_time_in_state);
-  Serial.print(" Current state: ");
-  Serial.println(game_state);
-  Serial.println("\n\n");
-  Serial.end();
-#endif
   switch (game_state)
   {
   case INIT_GAME:

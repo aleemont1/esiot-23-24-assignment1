@@ -33,12 +33,23 @@ void switch_game_state(const int STATE)
  */
 void init_game()
 {
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("Current state: INIT_GAME. Time in state: ");
+    Serial.println(elapsed_time_in_state);
+    Serial.end();
+#endif
     init_board();
     reset_board();
     reset_pulse();
     Serial.begin(9600);
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
     Serial.end();
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.println("Switching to state: INITIAL_STATE.");
+    Serial.end();
+#endif
     switch_game_state(INITIAL_STATE);
 }
 
@@ -48,9 +59,20 @@ void init_game()
  */
 void initial_state()
 {
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("Current state: INITIAL_STATE. Time in state: ");
+    Serial.println(elapsed_time_in_state);
+    Serial.end();
+#endif
     pulse();
     if (elapsed_time_in_state > 10000)
     {
+#ifdef __DEBUG
+        Serial.begin(9600);
+        Serial.println("Switching to state: GAME_STARTED_STATE.");
+        Serial.end();
+#endif
         switch_game_state(GAME_STARTED_STATE);
     }
     /**
@@ -80,7 +102,8 @@ void game_started_state()
 
 #ifdef __DEBUG
     Serial.begin(9600);
-    Serial.println("Starting game...");
+    Serial.print("Current state: GAME_STARTED_STATE. Time in state: ");
+    Serial.println(elapsed_time_in_state);
     Serial.end();
 #endif
 
@@ -93,7 +116,12 @@ void game_started_state()
         delay(T2);            // Ogni LED si spegne dopo un tempo T2.
         turn_off(PATTERN[i]); // Spengo i LED secondo il pattern generato.
     }
-    free(PATTERN);                     /** TODO: DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN (L'UTENTE GIOCA)! */
+    free(PATTERN); /** TODO: DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN (L'UTENTE GIOCA)! */
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.println("Switching to state: SLEEPING_STATE.");
+    Serial.end();
+#endif
     switch_game_state(SLEEPING_STATE); /** TODO: DA RIMUOVERE */
 }
 
@@ -105,7 +133,7 @@ void sleeping_state()
 {
 #ifdef __DEBUG
     Serial.begin(9600);
-    Serial.print("Going to sleep. Time: ");
+    Serial.print("Current state: SLEEPING_STATE. Time in state: ");
     Serial.println(elapsed_time_in_state);
     Serial.end();
 #endif
@@ -115,6 +143,11 @@ void sleeping_state()
     sleep_enable();
     sleep_mode();
     sleep_disable();
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.println("Switching to state: SLEEPING_STATE.");
+    Serial.end();
+#endif
     switch_game_state(INIT_GAME);
 }
 
