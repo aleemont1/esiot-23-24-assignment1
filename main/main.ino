@@ -6,7 +6,7 @@ extern int game_state;
 
 void setup()
 {
-initial_setup();
+  
 #ifdef __TEST
   test();
 #endif

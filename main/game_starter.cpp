@@ -45,6 +45,7 @@ void init_game()
     Serial.end();
 #endif
     init_board();
+    init_buttons();
     reset_board();
     reset_pulse();
     Serial.begin(9600);
@@ -80,6 +81,7 @@ void initial_state()
     Serial.end();
 #endif
     pulse();
+    
 
 
     if (elapsed_time_in_state > 10000)
@@ -164,7 +166,6 @@ void sleeping_state()
     sleep_disable();
     switch_game_state(INIT_GAME);
     detachInterrupt(0);
-    attachInterrupt(0, waitForClick, RISING);
 /*#ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
