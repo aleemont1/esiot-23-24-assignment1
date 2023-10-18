@@ -14,7 +14,7 @@ void game_started_state();
 void sleeping_state();
 void switch_game_state(const int STATE);
 void update_time();
-void sleepAruino();
+void sleepArduino();
 #ifdef __DEBUG
 void test();
 #endif

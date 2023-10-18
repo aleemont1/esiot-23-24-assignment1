@@ -5,6 +5,7 @@
 #include "fading_red.h"
 #include "led_manager.h"
 #include <avr/sleep.h>
+#include "buttons_manager.h"
 
 int game_state = INIT_GAME;     // Stato attuale della partita
 long initial_time_in_state = 0; // Tempo all'inizio dello stato
@@ -63,14 +64,11 @@ void init_game()
  * Il LED rosso inizia a pulsare (Stato iniziale del gioco)
  */
 
-void waitForClick() {
+/*void waitForClick() {
   switch_game_state(GAME_STARTED_STATE);
   detachInterrupt(0); //RIPRISTINO IL COMPORTAMENTO NORMALE DELL INTERRUPT SUL TASTO
-}
+}*/
 
-void initial_setup() {
-  attachInterrupt(0, waitForClick, HIGH);
-}
 
 
 void initial_state()
