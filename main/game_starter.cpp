@@ -11,7 +11,6 @@ int game_state = INIT_GAME;     // Stato attuale della partita
 long initial_time_in_state = 0; // Tempo all'inizio dello stato
 long elapsed_time_in_state = 0; // Tempo passato dall'inizio dello stato
 
-
 // Parametri di gioco
 int F = 1;                                       // Moltiplicatore velocità di gioco
 int difficulty;
@@ -28,12 +27,13 @@ unsigned long T3 = N_LED * T2;                   // Delay massimo per partita
 
 static void test()
 {
-    #ifdef __TEST
+#ifdef __TEST
     test_leds();
-    #endif
+#endif
 }
 
-void setup_wrapper() {
+void setup_wrapper()
+{
     init_board();
     init_buttons();
     test();
@@ -154,7 +154,7 @@ void game_started_state()
     Serial.println(elapsed_time_in_state);
     Serial.end();
 #endif
-    delay(2000); //aspetto 2 secondi prima di far partire lo stato alrimenti troppo veloce il passaggio da initial state a game state
+    //delay(2000);     // aspetto 2 secondi prima di far partire lo stato alrimenti troppo veloce il passaggio da initial state a game state
     reset_pulse();   // Il LED rosso potrebbe restare acceso.
     reset_board();   // Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
     turn_on_board(); // Accendo tutti i LED verdi.
@@ -169,24 +169,9 @@ void game_started_state()
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
     Serial.end();
+
 #endif
 }
-#endif*/
-    switch_game_state(INGAME_STATE);
-
-}
-
-void in_game_state() {
-  #ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.print("Current state: IN_GAME_STATE. Time in state: ");
-    Serial.println(elapsed_time_in_state);
-    Serial.end();
-  #endif
-  //readButtonsStatus();
-}
-
-
 
 
 void wakeUp() {
@@ -206,7 +191,7 @@ void sleeping_state()
     reset_board();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
-    attachInterrupt(0, wakeUp, RISING); //LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
+    attachInterrupt(0, wakeUp, RISING); // LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
     sleep_mode();
     sleep_disable();
     detachInterrupt(0);
