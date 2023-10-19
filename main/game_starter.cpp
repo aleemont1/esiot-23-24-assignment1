@@ -48,7 +48,6 @@ void switch_game_state(const int STATE)
 }
 
 /**
- * Inizializza la board
  * Spegne tutti i LED
  * Resetta lo stato del LED rosso
  * Stampa il messaggio di intro sul serial monitor
