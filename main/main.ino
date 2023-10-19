@@ -5,10 +5,8 @@
 extern int game_state;
 
 void setup()
-{ 
-#ifdef __TEST
-  test();
-#endif
+{
+  setup_wrapper();
   switch_game_state(INIT_GAME);
 }
 

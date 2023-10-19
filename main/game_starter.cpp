@@ -22,6 +22,23 @@ unsigned long T2 = 250;                          // Delay spegnimento singolo LE
 unsigned long T3 = N_LED * T2;                   // Delay massimo per partita
 
 /**
+ * Testa le varie componenti del sistema nella fase di setup.
+ * Da integrare con ulteriori funzioni di test.
+ */
+
+static void test()
+{
+    #ifdef __TEST
+    test_leds();
+    #endif
+}
+
+void setup_wrapper() {
+    init_board();
+    init_buttons();
+    test();
+}
+/**
  * Cambia lo stato del sistema.
  */
 void switch_game_state(const int STATE)
@@ -67,8 +84,6 @@ void init_game()
     Serial.println(elapsed_time_in_state);
     Serial.end();
 #endif
-    init_board();
-    init_buttons();
     reset_board();
     reset_pulse();
     Serial.begin(9600);
@@ -117,28 +132,15 @@ void initial_state()
 
     if (elapsed_time_in_state > 10000)
     {
-#ifdef __DEBUG //ho commentato perchè è sbagliato, dopo 10 secondi deve andare in sleep, era per provare lo stato?? immagino di si..
+#ifdef __DEBUG
         Serial.begin(9600);
-        Serial.println("Switching to state: GAME_SLEEPING_STATE.");
+        Serial.println("Switching to state: SLEEPING_STATE.");
         Serial.end();
 #endif
         
         sleepArduino();
     }
 }
-
-/**
- * function waiting_to_start_state():
- *   if(button_1 is pressed) then:
- *      switch_game_state(START_GAME)
- *
- *   endif
- *   if(elapsed_time > 10 secondi) then:
- *       switch_game_state(SLEEP)
- *   endif
- * end_function
- *
- */
 
 /**
  * Accende i LED verdi seguendo il pattern generato
@@ -164,10 +166,12 @@ void game_started_state()
         turn_off(PATTERN[i]); // Spengo i LED secondo il pattern generato.
     }
     free(PATTERN); /** TODO: DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN (L'UTENTE GIOCA)! */
-/*#ifdef __DEBUG
+#ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
     Serial.end();
+#endif
+}
 #endif*/
     switch_game_state(INGAME_STATE);
 
@@ -192,12 +196,12 @@ void wakeUp() {
 
 void sleeping_state()
 {
-/*#ifdef __DEBUG
+#ifdef __DEBUG
     Serial.begin(9600);
     Serial.print("Current state: SLEEPING_STATE. Time in state: ");
     Serial.println(elapsed_time_in_state);
     Serial.end();
-#endif*/
+#endif
     detachInterrupt(0);
     reset_pulse();
     reset_board();
@@ -208,12 +212,12 @@ void sleeping_state()
     sleep_disable();
     detachInterrupt(0);
     switch_game_state(INIT_GAME);
-    
-/*#ifdef __DEBUG
+    detachInterrupt(0);
+#ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
     Serial.end();
-#endif*/
+#endif
 }
 
 /**
@@ -223,14 +227,3 @@ void update_time()
 {
     elapsed_time_in_state = millis() - initial_time_in_state;
 }
-
-/**
- * Testa le varie componenti del sistema nella fase di setup.
- * Da integrare con ulteriori funzioni di test.
- */
-#ifdef __TEST
-void test()
-{
-    test_leds();
-}
-#endif
