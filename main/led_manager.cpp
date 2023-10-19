@@ -100,7 +100,7 @@ void reset_board()
 {
     for (int i = 0; i < N_LED; i++)
     {
-        digitalWrite(leds[i], LOW);
+        turn_off(leds[i]);
     }
 }
 
