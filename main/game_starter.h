@@ -8,6 +8,7 @@
 #define INGAME_STATE 5
 #define SLEEPING_STATE 4 // Verrà modificato il valore, vorrei che fosse lo stato con valore più alto
 
+void setup_wrapper();
 void init_game();
 void initial_state();
 void game_started_state();
