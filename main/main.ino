@@ -5,8 +5,7 @@
 extern int game_state;
 
 void setup()
-{
-  
+{ 
 #ifdef __TEST
   test();
 #endif
@@ -15,6 +14,7 @@ void setup()
 
 void loop()
 {
+  
   update_time();
   switch (game_state)
   {
@@ -27,9 +27,13 @@ void loop()
   case GAME_STARTED_STATE:
     game_started_state();
     break;
+  case INGAME_STATE:
+    in_game_state();
+    break;
   case SLEEPING_STATE:
     sleeping_state();
     break;
+  
   default:
     Serial.println("Illegal state");
     break;

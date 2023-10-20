@@ -1,6 +1,7 @@
 #define MIN_DELAY 10
 #define MAX_DELAY 1000
 #define N_LED 4
+#define MAX_DIFFICULT 4
 // PIN Pulsanti
 #define B1 2
 

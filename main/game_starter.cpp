@@ -13,7 +13,10 @@ long elapsed_time_in_state = 0; // Tempo passato dall'inizio dello stato
 
 
 // Parametri di gioco
-int F = 0;                                       // Moltiplicatore velocità di gioco
+int F = 1;                                       // Moltiplicatore velocità di gioco
+int difficulty;
+int newDifficult;
+int previousDifficult;
 unsigned long T1 = random(MIN_DELAY, MAX_DELAY); // Delay random inizio partita
 unsigned long T2 = 250;                          // Delay spegnimento singolo LED
 unsigned long T3 = N_LED * T2;                   // Delay massimo per partita
@@ -34,10 +37,30 @@ void switch_game_state(const int STATE)
  * Stampa il messaggio di intro sul serial monitor
  */
 
+void setDifficulty(const int difficulty) 
+{
+    Serial.begin(9600);
+    F = 1.0 + difficulty*0.1;
+    Serial.println("Difficulty: ");
+    Serial.println(difficulty);
+    Serial.end();
+}
+
+void readPotValue() 
+{
+  int newDifficult = map(analogRead(POT), 0, 1023, 1, MAX_DIFFICULT);
+  delay(1);
+  if (newDifficult != previousDifficult) {
+    setDifficulty(newDifficult);
+    previousDifficult = newDifficult;
+  }
+  
+}
 
 
 void init_game()
 {
+  Serial.begin(9600);
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.print("Current state: INIT_GAME. Time in state: ");
@@ -51,12 +74,17 @@ void init_game()
     Serial.begin(9600);
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
     Serial.end();
+    Serial.begin(9600);
+
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: INITIAL_STATE.");
     Serial.end();
 #endif
     switch_game_state(INITIAL_STATE);
+
+
+    
     
 }
 
@@ -71,6 +99,9 @@ void init_game()
 }*/
 
 
+void sleepArduino() {
+  switch_game_state(SLEEPING_STATE); 
+}
 
 void initial_state()
 {
@@ -81,22 +112,19 @@ void initial_state()
     Serial.end();
 #endif
     pulse();
-    
+    readPotValue();
 
 
     if (elapsed_time_in_state > 10000)
     {
-/*#ifdef __DEBUG //ho commentato perchè è sbagliato, dopo 10 secondi deve andare in sleep, era per provare lo stato?? immagino di si..
+#ifdef __DEBUG //ho commentato perchè è sbagliato, dopo 10 secondi deve andare in sleep, era per provare lo stato?? immagino di si..
         Serial.begin(9600);
-        Serial.println("Switching to state: GAME_STARTED_STATE.");
+        Serial.println("Switching to state: GAME_SLEEPING_STATE.");
         Serial.end();
-#endif*/
-        //switch_game_state(GAME_STARTED_STATE);
-        switch_game_state(SLEEPING_STATE); 
+#endif
+        
+        sleepArduino();
     }
-    /**
-     * switch_game_state(WAITING_TO_START_STATE);
-     */
 }
 
 /**
@@ -141,7 +169,21 @@ void game_started_state()
     Serial.println("Switching to state: SLEEPING_STATE.");
     Serial.end();
 #endif*/
+    switch_game_state(INGAME_STATE);
+
 }
+
+void in_game_state() {
+  #ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("Current state: IN_GAME_STATE. Time in state: ");
+    Serial.println(elapsed_time_in_state);
+    Serial.end();
+  #endif
+  //readButtonsStatus();
+}
+
+
 
 
 void wakeUp() {
@@ -164,8 +206,9 @@ void sleeping_state()
     attachInterrupt(0, wakeUp, RISING); //LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
     sleep_mode();
     sleep_disable();
-    switch_game_state(INIT_GAME);
     detachInterrupt(0);
+    switch_game_state(INIT_GAME);
+    
 /*#ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
