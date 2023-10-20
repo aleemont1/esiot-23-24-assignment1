@@ -5,7 +5,7 @@
 
 #define MIN_INT 0
 #define MAX_INT 255
-#define INT_DELAY 15
+#define INT_DELAY 12
 #define INIT_DELTA 5
 
 unsigned int intensity = MIN_INT;

@@ -1,4 +1,4 @@
-// Buttons manager, in this module all implementations of buttons_manager.h
+// LED manager, in this module all implementations of led_manager.h
 #include "Arduino.h"
 #include "led_manager.h"
 #include "constants.h"
@@ -49,7 +49,6 @@ void init_board()
 uint8_t *generate_led_pattern()
 {
     uint8_t *pattern = (uint8_t *)malloc(N_LED * sizeof(uint8_t));
-    ;
     uint8_t available[N_LED];
 
     for (int i = 0; i < N_LED; i++)
