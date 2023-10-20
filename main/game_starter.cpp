@@ -173,6 +173,15 @@ void game_started_state()
 #endif
 }
 
+void in_game_state() {
+  #ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("Current state: IN_GAME_STATE. Time in state: ");
+    Serial.println(elapsed_time_in_state);
+    Serial.end();
+  #endif
+  //readButtonsStatus();
+}
 
 void wakeUp() {
   switch_game_state(INIT_GAME);
