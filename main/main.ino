@@ -33,7 +33,9 @@ void loop()
     break;
   
   default:
+    Serial.begin(9600);
     Serial.println("Illegal state");
+    Serial.end();
     break;
   }
 }
