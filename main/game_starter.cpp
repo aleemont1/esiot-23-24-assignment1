@@ -12,13 +12,17 @@ long initial_time_in_state = 0; // Tempo all'inizio dello stato
 long elapsed_time_in_state = 0; // Tempo passato dall'inizio dello stato
 
 // Parametri di gioco
-int F = 1;                                       // Moltiplicatore velocità di gioco
+int F = 1; // Moltiplicatore velocità di gioco
 int difficulty;
 int newDifficult;
 int previousDifficult;
 unsigned long T1 = random(MIN_DELAY, MAX_DELAY); // Delay random inizio partita
 unsigned long T2 = 250;                          // Delay spegnimento singolo LED
 unsigned long T3 = N_LED * T2;                   // Delay massimo per partita
+
+static uint8_t *PATTERN;
+static bool pressed[N_LED] = {false, false, false, false};
+static uint8_t *sequence;
 
 /**
  * Testa le varie componenti del sistema nella fase di setup.
@@ -30,6 +34,47 @@ static void test()
 #ifdef __TEST
     test_leds();
 #endif
+}
+
+static void reverse_pattern()
+{
+    int start = 0;
+    int end = N_LED - 1;
+    uint8_t temp;
+
+    while (start < end)
+    {
+        // Swap the elements at the start and end indices
+        temp = PATTERN[start];
+        PATTERN[start] = PATTERN[end];
+        PATTERN[end] = temp;
+
+        start++;
+        end--;
+    }
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("REVERSED PATTERN: ");
+    for (int i = 0; i < N_LED; i++)
+    {
+        Serial.print(PATTERN[i]);
+        Serial.print(" ");
+    }
+    Serial.println();
+    Serial.end();
+#endif
+}
+
+static bool check_win()
+{
+    for (int i = 0; i < N_LED; i++)
+    {
+        if (sequence[i] != PATTERN[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 void setup_wrapper()
@@ -53,30 +98,29 @@ void switch_game_state(const int STATE)
  * Stampa il messaggio di intro sul serial monitor
  */
 
-void setDifficulty(const int difficulty) 
+void setDifficulty(const int difficulty)
 {
     Serial.begin(9600);
-    F = 1.0 + difficulty*0.1;
+    F = 1.0 + difficulty * 0.1;
     Serial.println("Difficulty: ");
     Serial.println(difficulty);
     Serial.end();
 }
 
-void readPotValue() 
+void readPotValue()
 {
-  int newDifficult = map(analogRead(POT), 0, 1023, 1, MAX_DIFFICULT);
-  delay(1);
-  if (newDifficult != previousDifficult) {
-    setDifficulty(newDifficult);
-    previousDifficult = newDifficult;
-  }
-  
+    int newDifficult = map(analogRead(POT), 0, 1023, 1, MAX_DIFFICULT);
+    delay(1);
+    if (newDifficult != previousDifficult)
+    {
+        setDifficulty(newDifficult);
+        previousDifficult = newDifficult;
+    }
 }
-
 
 void init_game()
 {
-  Serial.begin(9600);
+    Serial.begin(9600);
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.print("Current state: INIT_GAME. Time in state: ");
@@ -96,10 +140,6 @@ void init_game()
     Serial.end();
 #endif
     switch_game_state(INITIAL_STATE);
-
-
-    
-    
 }
 
 /**
@@ -112,9 +152,9 @@ void init_game()
   detachInterrupt(0); //RIPRISTINO IL COMPORTAMENTO NORMALE DELL INTERRUPT SUL TASTO
 }*/
 
-
-void sleepArduino() {
-  switch_game_state(SLEEPING_STATE); 
+void sleepArduino()
+{
+    switch_game_state(SLEEPING_STATE);
 }
 
 void initial_state()
@@ -128,7 +168,6 @@ void initial_state()
     pulse();
     readPotValue();
 
-
     if (elapsed_time_in_state > 10000)
     {
 #ifdef __DEBUG
@@ -136,17 +175,15 @@ void initial_state()
         Serial.println("Switching to state: SLEEPING_STATE.");
         Serial.end();
 #endif
-        
+
         sleepArduino();
     }
 }
-
 /**
  * Accende i LED verdi seguendo il pattern generato
  */
 void game_started_state()
 {
-    const uint8_t *PATTERN = generate_led_pattern();
 
 #ifdef __DEBUG
     Serial.begin(9600);
@@ -154,37 +191,69 @@ void game_started_state()
     Serial.println(elapsed_time_in_state);
     Serial.end();
 #endif
-    //delay(2000);     // aspetto 2 secondi prima di far partire lo stato alrimenti troppo veloce il passaggio da initial state a game state
+    // delay(2000);     // aspetto 2 secondi prima di far partire lo stato alrimenti troppo veloce il passaggio da initial state a game state
     reset_pulse();   // Il LED rosso potrebbe restare acceso.
     reset_board();   // Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
     turn_on_board(); // Accendo tutti i LED verdi.
     delay(T1);       // Prima di iniziare a spegnere i LED aspetto un tempo T1.
+    PATTERN = generate_led_pattern();
     for (int i = 0; i < N_LED; i++)
     {
         delay(T2);            // Ogni LED si spegne dopo un tempo T2.
         turn_off(PATTERN[i]); // Spengo i LED secondo il pattern generato.
     }
-    free(PATTERN); /** TODO: DA SPOSTARE NELLA FUNZIONE IN CUI SI RISOLVE IL PATTERN (L'UTENTE GIOCA)! */
+    switch_game_state(INGAME_STATE);
+}
+
+void in_game_state()
+{
+    /**#ifdef __DEBUG
+        Serial.begin(9600);
+        Serial.print("Current state: IN_GAME_STATE. Time in state: ");
+        Serial.println(elapsed_time_in_state);
+        Serial.end();
+    #endif
+    */
+    while (elapsed_time_in_state < 10000)
+    {
+        for (int i = 0; i < N_LED; i++)
+        {
+            int btn_status = button_handler(i);
+            sequence = malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
+            if (btn_status == HIGH && pressed[i] == false)
+            {
 #ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.println("Switching to state: SLEEPING_STATE.");
-    Serial.end();
-
+                Serial.begin(9600);
+                Serial.print("Pressed: [B");
+                Serial.print(i);
+                Serial.println("]");
+                Serial.end();
 #endif
-}
-
-void in_game_state() {
-  #ifdef __DEBUG
+                pressed[i] = true;
+                sequence[i] = BTNS[i];
+                turn_on(leds[i]);
+            }
+        }
+    }
+    reverse_pattern();
+    if (check_win())
+    {
+        Serial.begin(9600);
+        Serial.println("YOU WON!!!");
+        Serial.end();
+        free(PATTERN);
+        free(sequence);
+        switch_game_state(SLEEPING_STATE);
+    }
     Serial.begin(9600);
-    Serial.print("Current state: IN_GAME_STATE. Time in state: ");
-    Serial.println(elapsed_time_in_state);
+    Serial.println("YOU LOSE :(");
     Serial.end();
-  #endif
-  //readButtonsStatus();
+    switch_game_state(SLEEPING_STATE);
 }
 
-void wakeUp() {
-  switch_game_state(INIT_GAME);
+void wakeUp()
+{
+    switch_game_state(INIT_GAME);
 }
 
 void sleeping_state()
