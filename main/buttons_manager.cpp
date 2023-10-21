@@ -45,6 +45,7 @@ int button_handler(const int B)
 {
   if (B >= 0 && B <= N_LED)
   {
+    delay(10);
     return digitalRead(BTNS[B]);
   }
 }

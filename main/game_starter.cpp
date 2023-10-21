@@ -36,6 +36,9 @@ static void test()
 #endif
 }
 
+/**
+ * Reverses the PATTERN array.
+ */
 static void reverse_pattern()
 {
     int start = 0;
@@ -65,10 +68,14 @@ static void reverse_pattern()
 #endif
 }
 
+/**
+ * Checks if the pressed sequence is equal to the (reversed) PATTERN.
+ */
 static bool check_win()
 {
     for (int i = 0; i < N_LED; i++)
     {
+
         if (sequence[i] != PATTERN[i])
         {
             return false;
@@ -77,12 +84,16 @@ static bool check_win()
     return true;
 }
 
+/**
+ * Initializes LEDs and buttons.
+ */
 void setup_wrapper()
 {
     init_board();
     init_buttons();
     test();
 }
+
 /**
  * Cambia lo stato del sistema.
  */
@@ -214,14 +225,18 @@ void in_game_state()
         Serial.end();
     #endif
     */
-    while (elapsed_time_in_state < 10000)
+    int btns_pressed_count = 0;
+    sequence = malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
+    while (btns_pressed_count < N_LED)
     {
         for (int i = 0; i < N_LED; i++)
         {
             int btn_status = button_handler(i);
-            sequence = malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
             if (btn_status == HIGH && pressed[i] == false)
             {
+                pressed[i] = true;
+                sequence[btns_pressed_count++] = leds[i];
+                turn_on(leds[i]);
 #ifdef __DEBUG
                 Serial.begin(9600);
                 Serial.print("Pressed: [B");
@@ -229,12 +244,20 @@ void in_game_state()
                 Serial.println("]");
                 Serial.end();
 #endif
-                pressed[i] = true;
-                sequence[i] = BTNS[i];
-                turn_on(leds[i]);
             }
         }
     }
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.print("Sequence: ");
+    for (int i = 0; i < N_LED; i++)
+    {
+        Serial.print(sequence[i]);
+        Serial.print(" ");
+    }
+    Serial.println();
+    Serial.end();
+#endif
     reverse_pattern();
     if (check_win())
     {
@@ -243,12 +266,17 @@ void in_game_state()
         Serial.end();
         free(PATTERN);
         free(sequence);
+        delay(500);
         switch_game_state(SLEEPING_STATE);
     }
-    Serial.begin(9600);
-    Serial.println("YOU LOSE :(");
-    Serial.end();
-    switch_game_state(SLEEPING_STATE);
+    else
+    {
+        Serial.begin(9600);
+        Serial.println("YOU LOSE :(");
+        Serial.end();
+        delay(1000);
+        switch_game_state(SLEEPING_STATE);
+    }
 }
 
 void wakeUp()
