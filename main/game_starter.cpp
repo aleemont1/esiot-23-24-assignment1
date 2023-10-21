@@ -55,7 +55,6 @@ static void reverse_pattern()
         start++;
         end--;
     }
-#ifdef __DEBUG
     Serial.begin(9600);
     Serial.print("REVERSED PATTERN: ");
     for (int i = 0; i < N_LED; i++)
@@ -65,7 +64,6 @@ static void reverse_pattern()
     }
     Serial.println();
     Serial.end();
-#endif
 }
 
 /**
@@ -131,19 +129,11 @@ void readPotValue()
 
 void init_game()
 {
-    Serial.begin(9600);
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.print("Current state: INIT_GAME. Time in state: ");
-    Serial.println(elapsed_time_in_state);
-    Serial.end();
-#endif
     reset_board();
     reset_pulse();
     Serial.begin(9600);
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
     Serial.end();
-    Serial.begin(9600);
 
 #ifdef __DEBUG
     Serial.begin(9600);
@@ -153,16 +143,6 @@ void init_game()
     switch_game_state(INITIAL_STATE);
 }
 
-/**
- * TODO: Completare l'inizializzazione della partita secondo le specifiche
- * Il LED rosso inizia a pulsare (Stato iniziale del gioco)
- */
-
-/*void waitForClick() {
-  switch_game_state(GAME_STARTED_STATE);
-  detachInterrupt(0); //RIPRISTINO IL COMPORTAMENTO NORMALE DELL INTERRUPT SUL TASTO
-}*/
-
 void sleepArduino()
 {
     switch_game_state(SLEEPING_STATE);
@@ -170,12 +150,6 @@ void sleepArduino()
 
 void initial_state()
 {
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.print("Current state: INITIAL_STATE. Time in state: ");
-    Serial.println(elapsed_time_in_state);
-    Serial.end();
-#endif
     pulse();
     readPotValue();
 
@@ -195,39 +169,51 @@ void initial_state()
  */
 void game_started_state()
 {
-
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.print("Current state: GAME_STARTED_STATE. Time in state: ");
-    Serial.println(elapsed_time_in_state);
-    Serial.end();
-#endif
-    // delay(2000);     // aspetto 2 secondi prima di far partire lo stato alrimenti troppo veloce il passaggio da initial state a game state
     reset_pulse();   // Il LED rosso potrebbe restare acceso.
     reset_board();   // Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
     turn_on_board(); // Accendo tutti i LED verdi.
     delay(T1);       // Prima di iniziare a spegnere i LED aspetto un tempo T1.
     PATTERN = generate_led_pattern();
+    Serial.begin(9600);
+    Serial.print("PATTERN: ");
+    for (int i = 0; i < N_LED; i++)
+    {
+        Serial.print(PATTERN[i]);
+        Serial.print(" ");
+    }
+    Serial.println();
+    Serial.end();
     for (int i = 0; i < N_LED; i++)
     {
         delay(T2);            // Ogni LED si spegne dopo un tempo T2.
         turn_off(PATTERN[i]); // Spengo i LED secondo il pattern generato.
     }
+#ifdef __DEBUG
+    Serial.begin(9600);
+    Serial.println("Switching to state: INGAME_STATE.");
+    Serial.end();
+#endif
     switch_game_state(INGAME_STATE);
 }
 
+/**
+ * This function manages the game.
+ * It calls the button handlers until all the buttons have
+ * been pressed or the time limit is reached.
+ * When a button is pressed (status is HIGH), the corresponding
+ * position in the pressed array is set to true, the first free
+ * position of the sequence array is set to the value of the i-th
+ * value in the LEDs array, and the i-th LED is turned on.
+ * After the while has exited the PATTERN array is reversed (in place) and
+ * winning conditions are verified and the game restarts.
+ *
+ * TODO: Increase points after win.
+ */
 void in_game_state()
 {
-    /**#ifdef __DEBUG
-        Serial.begin(9600);
-        Serial.print("Current state: IN_GAME_STATE. Time in state: ");
-        Serial.println(elapsed_time_in_state);
-        Serial.end();
-    #endif
-    */
     int btns_pressed_count = 0;
     sequence = malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
-    while (btns_pressed_count < N_LED)
+    while (btns_pressed_count < N_LED && elapsed_time_in_state < 10000) // 10s max (Da cambiare)
     {
         for (int i = 0; i < N_LED; i++)
         {
@@ -241,13 +227,14 @@ void in_game_state()
                 Serial.begin(9600);
                 Serial.print("Pressed: [B");
                 Serial.print(i);
+                Serial.print("] Tuned on: [L");
+                Serial.print(leds[i]);
                 Serial.println("]");
                 Serial.end();
 #endif
             }
         }
     }
-#ifdef __DEBUG
     Serial.begin(9600);
     Serial.print("Sequence: ");
     for (int i = 0; i < N_LED; i++)
@@ -257,26 +244,22 @@ void in_game_state()
     }
     Serial.println();
     Serial.end();
-#endif
     reverse_pattern();
+    Serial.begin(9600);
     if (check_win())
     {
-        Serial.begin(9600);
         Serial.println("YOU WON!!!");
-        Serial.end();
-        free(PATTERN);
-        free(sequence);
-        delay(500);
-        switch_game_state(SLEEPING_STATE);
     }
     else
     {
-        Serial.begin(9600);
         Serial.println("YOU LOSE :(");
-        Serial.end();
-        delay(1000);
-        switch_game_state(SLEEPING_STATE);
     }
+    Serial.end();
+    free(PATTERN);
+    free(sequence);
+    delay(500);
+
+    switch_game_state(INIT_GAME);
 }
 
 void wakeUp()
@@ -286,12 +269,6 @@ void wakeUp()
 
 void sleeping_state()
 {
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.print("Current state: SLEEPING_STATE. Time in state: ");
-    Serial.println(elapsed_time_in_state);
-    Serial.end();
-#endif
     detachInterrupt(0);
     reset_pulse();
     reset_board();
