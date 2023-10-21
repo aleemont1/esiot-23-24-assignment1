@@ -24,6 +24,7 @@ void interrupt_setup()
 
 void init_buttons()
 {
+  
   for (int i = 0; i < N_LED; i++)
   {
     pinMode(BTNS[i], OUTPUT);
@@ -33,14 +34,8 @@ void init_buttons()
   interrupt_setup(); // abilita il primo comportamento dell'interrupt
 }
 
-/*
-void readButtonsStatus()
-{
-  for (int i = 0; i < N_LED; i++)
-  {
-    button_handler(BTNS[i]);
-  }
-} */
+
+
 
 int button_handler(const int B)
 {
