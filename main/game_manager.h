@@ -17,8 +17,8 @@ void sleeping_state();
 void switch_game_state(const int STATE);
 void update_time();
 void sleepArduino();
-void setDifficulty(const int value);
-void readPotValue();
+void game_over();
+void game_win();
 
 #ifdef __DEBUG
 void test();
