@@ -4,7 +4,6 @@
 #include "constants.h"
 #include <time.h>
 
-#ifdef __TEST
 void test_leds()
 {
     for (int i = 0; i < N_LED; i++)
@@ -23,7 +22,6 @@ void test_leds()
         digitalWrite(leds[i], LOW);
     }
 }
-#endif
 
 /**
  * Inizializza la board di LED, settando i pin in OUTPUT mode.

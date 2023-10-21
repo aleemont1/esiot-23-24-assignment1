@@ -1,7 +1,7 @@
 // Initial status (RED LED fading)
 #include "Arduino.h"
 #include "constants.h"
-#include "fading_red.h"
+#include "pulsing_red.h"
 
 #define MIN_INT 0
 #define MAX_INT 255

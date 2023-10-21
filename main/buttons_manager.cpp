@@ -1,6 +1,6 @@
 // Buttons manager, in this module all implementations of buttons_manager.h
 #include "buttons_manager.h"
-#include "game_starter.h"
+#include "game_manager.h"
 #include "Arduino.h"
 #include "constants.h"
 

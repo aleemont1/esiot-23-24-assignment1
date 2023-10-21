@@ -1,8 +1,8 @@
 #include "constants.h"
-#include "game_starter.h"
-#include "buttons_manager.h" //Dovrebbe essere spostato in game_starter.cpp
+#include "game_manager.h"
 
 extern int game_state;
+extern int elapsed_time_in_state;
 
 void setup()
 {
