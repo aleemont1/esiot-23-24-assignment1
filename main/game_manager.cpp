@@ -1,11 +1,11 @@
 // Inizializzazione della partita
-#include "game_starter.h"
+#include "game_manager.h"
 #include "Arduino.h"
 #include "constants.h"
-#include "fading_red.h"
+#include "pulsing_red.h"
 #include "led_manager.h"
-#include <avr/sleep.h>
 #include "buttons_manager.h"
+#include <avr/sleep.h>
 
 int game_state = INIT_GAME;     // Stato attuale della partita
 long initial_time_in_state = 0; // Tempo all'inizio dello stato
@@ -20,67 +20,23 @@ unsigned long T1 = random(MIN_DELAY, MAX_DELAY); // Delay random inizio partita
 unsigned long T2 = 250;                          // Delay spegnimento singolo LED
 unsigned long T3 = N_LED * T2;                   // Delay massimo per partita
 
-static uint8_t *PATTERN;
-static bool pressed[N_LED] = {false, false, false, false};
-static uint8_t *sequence;
+static uint8_t *PATTERN;    //Random LED pattern
+static uint8_t *sequence;   //The sequence if LEDs turned on by user.
+static bool pressed[N_LED] = {false, false, false, false};  //To avoid repetition in sequence.
 
 /**
  * Testa le varie componenti del sistema nella fase di setup.
  * Da integrare con ulteriori funzioni di test.
  */
-
-static void test()
-{
-#ifdef __TEST
-    test_leds();
-#endif
-}
-
+static void test();
 /**
  * Reverses the PATTERN array.
  */
-static void reverse_pattern()
-{
-    int start = 0;
-    int end = N_LED - 1;
-    uint8_t temp;
-
-    while (start < end)
-    {
-        // Swap the elements at the start and end indices
-        temp = PATTERN[start];
-        PATTERN[start] = PATTERN[end];
-        PATTERN[end] = temp;
-
-        start++;
-        end--;
-    }
-    Serial.begin(9600);
-    Serial.print("REVERSED PATTERN: ");
-    for (int i = 0; i < N_LED; i++)
-    {
-        Serial.print(PATTERN[i]);
-        Serial.print(" ");
-    }
-    Serial.println();
-    Serial.end();
-}
-
+static void reverse_pattern();
 /**
  * Checks if the pressed sequence is equal to the (reversed) PATTERN.
  */
-static bool check_win()
-{
-    for (int i = 0; i < N_LED; i++)
-    {
-
-        if (sequence[i] != PATTERN[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
+static bool check_win();
 
 /**
  * Initializes LEDs and buttons.
@@ -160,7 +116,6 @@ void initial_state()
         Serial.println("Switching to state: SLEEPING_STATE.");
         Serial.end();
 #endif
-
         sleepArduino();
     }
 }
@@ -293,4 +248,51 @@ void sleeping_state()
 void update_time()
 {
     elapsed_time_in_state = millis() - initial_time_in_state;
+}
+
+void test()
+{
+#ifdef __TEST
+    test_leds();
+#endif
+}
+
+static void reverse_pattern()
+{
+    int start = 0;
+    int end = N_LED - 1;
+    uint8_t temp;
+
+    while (start < end)
+    {
+        // Swap the elements at the start and end indices
+        temp = PATTERN[start];
+        PATTERN[start] = PATTERN[end];
+        PATTERN[end] = temp;
+
+        start++;
+        end--;
+    }
+    Serial.begin(9600);
+    Serial.print("REVERSED PATTERN: ");
+    for (int i = 0; i < N_LED; i++)
+    {
+        Serial.print(PATTERN[i]);
+        Serial.print(" ");
+    }
+    Serial.println();
+    Serial.end();
+}
+
+static bool check_win()
+{
+    for (int i = 0; i < N_LED; i++)
+    {
+
+        if (sequence[i] != PATTERN[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
