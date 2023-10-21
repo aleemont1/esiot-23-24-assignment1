@@ -4,8 +4,6 @@
 #include "constants.h"
 #include <time.h>
 
-const uint8_t leds[4] = {L1, L2, L3, L4};
-
 #ifdef __TEST
 void test_leds()
 {

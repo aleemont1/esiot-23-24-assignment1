@@ -4,7 +4,6 @@
 #define MAX_DIFFICULT 4
 // PIN Pulsanti
 #define B1 2
-
 #define B2 3
 #define B3 4
 #define B4 5
@@ -18,7 +17,10 @@
 // PIN Potenziometro
 #define POT A0
 
-// DEBUG: Enable for advanced logging.
+const uint8_t leds[] = {L1, L2, L3, L4};
+const uint8_t BTNS[] = {B1, B2, B3, B4};
+
+// DEBUG: Enable for ad vanced logging.
 #define __DEBUG
 // TEST: Enable for advanced testing.
 // #define __TEST
