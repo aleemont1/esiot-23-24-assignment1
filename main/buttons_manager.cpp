@@ -33,19 +33,20 @@ void init_buttons()
   interrupt_setup(); // abilita il primo comportamento dell'interrupt
 }
 
+/*
 void readButtonsStatus()
 {
   for (int i = 0; i < N_LED; i++)
   {
     button_handler(BTNS[i]);
   }
-}
+} */
 
 int button_handler(const int B)
 {
   if (B >= 0 && B <= N_LED)
   {
-    delay(10);
-    return digitalRead(BTNS[B]);
+    delay(10);                    //Bouncing delay
+    return digitalRead(BTNS[B]);  //Ritorna lo stato del bottone B.
   }
 }
