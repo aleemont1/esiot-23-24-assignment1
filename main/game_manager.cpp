@@ -15,11 +15,13 @@ long elapsed_time_in_state = 0; // Tempo passato dall'inizio dello stato
 // Parametri di gioco
 unsigned long T1 = random(MIN_DELAY, MAX_DELAY); // Delay random inizio partita
 unsigned long T2 = 250;                          // Delay spegnimento singolo LED
-unsigned long T3 = N_LED * T2;                   // Delay massimo per partita
+unsigned long T3 = 1500 + N_LED * T2;            // Delay massimo per partita (1.5s + il tempo di spegnimento dei LED)
+unsigned int SCORE = 0;
+extern double F;
 
-static uint8_t *PATTERN;    //Random LED pattern
-static uint8_t *sequence;   //The sequence if LEDs turned on by user.
-static bool pressed[N_LED] = {false, false, false, false};  //To avoid repetition in sequence.
+static uint8_t *PATTERN;                                   // Random LED pattern
+static uint8_t *sequence;                                  // The sequence if LEDs turned on by user.
+static bool pressed[N_LED] = {false, false, false, false}; // To avoid repetition in sequence.
 
 /**
  * Testa le varie componenti del sistema nella fase di setup.
@@ -35,6 +37,13 @@ static void reverse_pattern();
  */
 static bool check_win();
 
+static void reset_parameters()
+{
+    T1 = random(MIN_DELAY, MAX_DELAY); // Delay random inizio partita
+    T2 = 250;                          // Delay spegnimento singolo LED
+    T3 = 1000 + N_LED * T2;            // Delay massimo per partita (1s + il tempo di spegnimento dei LED)
+    SCORE = 0;
+}
 /**
  * Initializes LEDs and buttons.
  */
@@ -102,9 +111,9 @@ void initial_state()
  */
 void game_started_state()
 {
-    reset_pulse();   // Il LED rosso potrebbe restare acceso.
-    reset_board();   // Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
-   
+    reset_pulse(); // Il LED rosso potrebbe restare acceso.
+    reset_board(); // Solo per sicurezza, potrebbe essere rimosso in seguito a test più approfonditi.
+
     turn_on_board(); // Accendo tutti i LED verdi.
     delay(T1);       // Prima di iniziare a spegnere i LED aspetto un tempo T1.
     PATTERN = generate_led_pattern();
@@ -145,11 +154,24 @@ void game_started_state()
  */
 void in_game_state()
 {
+    T3 = 1500 + N_LED * T2; //1.5s + tempo spegnimento LED
+
+    Serial.begin(9600);
+    Serial.print("T3: ");
+    Serial.print(T3);
+    Serial.print(" T2: ");
+    Serial.print(T2);
+    Serial.print(" F:");
+    Serial.println(F);
+    Serial.end();
+
     int btns_pressed_count = 0;
-    sequence = malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
-    while (btns_pressed_count < N_LED && elapsed_time_in_state < 10000) // 10s max (Da cambiare)
+    sequence = (uint8_t*) malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
+
+    while (btns_pressed_count < N_LED && elapsed_time_in_state < T3)
     {
-        for (int i = 0; i < N_LED; i++)
+        update_time();
+        for (int i = 0; i < N_LED && elapsed_time_in_state < T3; i++)
         {
             int btn_status = button_handler(i);
             if (btn_status == HIGH && pressed[i] == false)
@@ -189,37 +211,39 @@ void in_game_state()
         Serial.println("YOU LOSE :(");
         reset_board();
         game_over();
-        delay(10000);
+        //delay(10000);
     }
 
-    for (int i = 0; i < N_LED; i++) //alla fine azzero i tasti premuti perchè cosi posso premerli alla successiva partita
+    for (int i = 0; i < N_LED; i++) // alla fine azzero i tasti premuti perchè cosi posso premerli alla successiva partita
     {
-         pressed[i] = false;
+        pressed[i] = false;
     }
-   
-    Serial.end();
+
     free(PATTERN);
     free(sequence);
-    delay(500);
+    //delay(500);
+    Serial.println("Starting a new game");
+    Serial.end();
 
     switch_game_state(INIT_GAME);
 }
 
 void game_over()
 {
-  int score = 10; //solo di esempio per verifica della stampa
-  Serial.println("Game Over. Final Score: " + String(score));
-  turn_on(LR);
-  delay(1000);
-  turn_off(LR);
+    Serial.println("Game Over. Final Score: " + String(SCORE));
+    reset_parameters();
+    turn_on(LR);
+    delay(1000);
+    turn_off(LR);
 }
 
-void game_win() {
-  /**
-  
-  TODO: vittoria
-  
-   */
+void game_win()
+{
+    /**
+
+    TODO: vittoria
+
+     */
 }
 
 void wakeUp()
@@ -298,5 +322,7 @@ static bool check_win()
             return false;
         }
     }
+    SCORE += 10;
+    T2 = (int)(T2 / F);
     return true;
 }
