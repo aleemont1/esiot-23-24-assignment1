@@ -33,8 +33,7 @@ void init_board()
         pinMode(leds[i], OUTPUT);
     }
     pinMode(LR, OUTPUT);
-    //pinMode(POT, INPUT);
-
+    // pinMode(POT, INPUT);
 }
 
 /**
@@ -107,5 +106,23 @@ void turn_on_board()
     for (int i = 0; i < N_LED; i++)
     {
         turn_on(leds[i]);
+    }
+}
+
+void win_animation()
+{
+    for (int i = 0; i < N_LED; i++)
+    {
+        turn_off(leds[i]);
+    }
+    delay(500);
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < N_LED; j++)
+        {
+            turn_on(leds[j]);
+            delay(250);
+            turn_off(leds[j]);
+        }
     }
 }

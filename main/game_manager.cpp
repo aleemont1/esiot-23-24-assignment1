@@ -154,7 +154,7 @@ void game_started_state()
  */
 void in_game_state()
 {
-    T3 = 1500 + N_LED * T2; //1.5s + tempo spegnimento LED
+    T3 = 1500 + N_LED * T2; // 1.5s + tempo spegnimento LED
 
     Serial.begin(9600);
     Serial.print("T3: ");
@@ -166,7 +166,7 @@ void in_game_state()
     Serial.end();
 
     int btns_pressed_count = 0;
-    sequence = (uint8_t*) malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
+    sequence = (uint8_t *)malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
 
     while (btns_pressed_count < N_LED && elapsed_time_in_state < T3)
     {
@@ -205,13 +205,14 @@ void in_game_state()
     if (check_win())
     {
         Serial.println("YOU WON!!!");
+        win_animation();
     }
     else
     {
         Serial.println("YOU LOSE :(");
         reset_board();
         game_over();
-        //delay(10000);
+        // delay(10000);
     }
 
     for (int i = 0; i < N_LED; i++) // alla fine azzero i tasti premuti perchè cosi posso premerli alla successiva partita
@@ -221,7 +222,7 @@ void in_game_state()
 
     free(PATTERN);
     free(sequence);
-    //delay(500);
+    delay(500);
     Serial.println("Starting a new game");
     Serial.end();
 
@@ -232,9 +233,8 @@ void game_over()
 {
     Serial.println("Game Over. Final Score: " + String(SCORE));
     reset_parameters();
-    turn_on(LR);
-    delay(1000);
-    turn_off(LR);
+    /**Turn on RED LED for 1.5s*/
+    lose_animation();
 }
 
 void game_win()
