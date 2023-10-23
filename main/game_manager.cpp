@@ -93,6 +93,18 @@ void sleepArduino()
 
 void initial_state()
 {
+    /**Ristabilire vecchio comportamento dei buttons*/
+    PCMSK2 = 0;
+    // Disable Pin Change Interrupts
+    PCICR = 0;
+
+    // Reconfigure pins as digital inputs
+    pinMode(B1, INPUT);
+    pinMode(B2, INPUT);
+    pinMode(B3, INPUT);
+    pinMode(B4, INPUT);
+    sei(); // Re-enable global interrupts
+    
     pulse();
     readPotValue();
 
@@ -103,7 +115,6 @@ void initial_state()
         Serial.println("Switching to state: SLEEPING_STATE.");
         Serial.end();
 #endif
-        sei();
         sleepArduino();
     }
 }
@@ -263,19 +274,13 @@ void sleeping_state()
     // Enable Pin Change Interrupts
     PCICR = (1 << PCIE2);
 
-    // Enable global interrupts
     sei();
-    // detachInterrupt(0);
     reset_pulse();
     reset_board();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-    //cli(); // Disable global interrupts
     sleep_enable();
-    // attachInterrupt(0, wakeUp, RISING); // LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
     sleep_mode();
     sleep_disable();
-    cli();                   // Riabilita vecchi interrupt
-    // detachInterrupt(0);
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");

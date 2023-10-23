@@ -14,12 +14,12 @@ void waitForClick()
 {
   switch_game_state(INITIAL_STATE);
   detachInterrupt(0);
-  attachInterrupt(0, waitForClickSleeping, HIGH); // ripristino l'interrupt in modo tale che ripassi all'iniziale
+  attachInterrupt(0, waitForClickSleeping, CHANGE); // ripristino l'interrupt in modo tale che ripassi all'iniziale
 }
 
 void interrupt_setup()
 {
-  attachInterrupt(0, waitForClick, HIGH); // sul pin 2, metto interrupt
+  attachInterrupt(0, waitForClick, CHANGE); // sul pin 2, metto interrupt
 }
 
 void init_buttons()
