@@ -28,3 +28,10 @@ void reset_pulse()
     intensity_delta = INIT_DELTA;
     analogWrite(LR, intensity);
 }
+
+void lose_animation()
+{
+    analogWrite(LR, MAX_INT);
+    delay(1500);
+    analogWrite(LR, MIN_INT);
+}

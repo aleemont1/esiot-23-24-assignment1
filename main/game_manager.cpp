@@ -93,10 +93,22 @@ void sleepArduino()
 
 void initial_state()
 {
+    /**Ristabilire vecchio comportamento dei buttons*/
+    PCMSK2 = 0;
+    // Disable Pin Change Interrupts
+    PCICR = 0;
+
+    // Reconfigure pins as digital inputs
+    pinMode(B1, INPUT);
+    pinMode(B2, INPUT);
+    pinMode(B3, INPUT);
+    pinMode(B4, INPUT);
+    sei(); // Re-enable global interrupts
+    
     pulse();
     readPotValue();
 
-    if (elapsed_time_in_state > 10000)
+    if (elapsed_time_in_state > 5000)
     {
 #ifdef __DEBUG
         Serial.begin(9600);
@@ -154,7 +166,7 @@ void game_started_state()
  */
 void in_game_state()
 {
-    T3 = 1500 + N_LED * T2; //1.5s + tempo spegnimento LED
+    T3 = 1500 + N_LED * T2; // 1.5s + tempo spegnimento LED
 
     Serial.begin(9600);
     Serial.print("T3: ");
@@ -166,7 +178,7 @@ void in_game_state()
     Serial.end();
 
     int btns_pressed_count = 0;
-    sequence = (uint8_t*) malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
+    sequence = (uint8_t *)malloc(sizeof(PATTERN) / sizeof(PATTERN[0]));
 
     while (btns_pressed_count < N_LED && elapsed_time_in_state < T3)
     {
@@ -205,13 +217,14 @@ void in_game_state()
     if (check_win())
     {
         Serial.println("YOU WON!!!");
+        win_animation();
     }
     else
     {
         Serial.println("YOU LOSE :(");
         reset_board();
         game_over();
-        //delay(10000);
+        // delay(10000);
     }
 
     for (int i = 0; i < N_LED; i++) // alla fine azzero i tasti premuti perchè cosi posso premerli alla successiva partita
@@ -221,7 +234,7 @@ void in_game_state()
 
     free(PATTERN);
     free(sequence);
-    //delay(500);
+    delay(500);
     Serial.println("Starting a new game");
     Serial.end();
 
@@ -232,9 +245,8 @@ void game_over()
 {
     Serial.println("Game Over. Final Score: " + String(SCORE));
     reset_parameters();
-    turn_on(LR);
-    delay(1000);
-    turn_off(LR);
+    /**Turn on RED LED for 1.5s*/
+    lose_animation();
 }
 
 void game_win()
@@ -253,16 +265,22 @@ void wakeUp()
 
 void sleeping_state()
 {
-    detachInterrupt(0);
+    // Configure pin change interrupts for pins 2, 3, 4, and 5
+    PCMSK2 = (1 << PCINT18);  // Pin 2
+    PCMSK2 |= (1 << PCINT19); // Pin 3
+    PCMSK2 |= (1 << PCINT20); // Pin 4
+    PCMSK2 |= (1 << PCINT21); // Pin 5
+
+    // Enable Pin Change Interrupts
+    PCICR = (1 << PCIE2);
+
+    sei();
     reset_pulse();
     reset_board();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
-    attachInterrupt(0, wakeUp, RISING); // LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
     sleep_mode();
     sleep_disable();
-    switch_game_state(INIT_GAME);
-    detachInterrupt(0);
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
