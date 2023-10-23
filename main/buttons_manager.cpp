@@ -27,8 +27,8 @@ void init_buttons()
   
   for (int i = 0; i < N_LED; i++)
   {
-    pinMode(BTNS[i], OUTPUT);
-    digitalWrite(BTNS[i], LOW);
+    pinMode(BTNS[i], INPUT);
+    //digitalWrite(BTNS[i], LOW);
   }
 
   interrupt_setup(); // abilita il primo comportamento dell'interrupt

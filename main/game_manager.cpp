@@ -96,13 +96,14 @@ void initial_state()
     pulse();
     readPotValue();
 
-    if (elapsed_time_in_state > 10000)
+    if (elapsed_time_in_state > 5000)
     {
 #ifdef __DEBUG
         Serial.begin(9600);
         Serial.println("Switching to state: SLEEPING_STATE.");
         Serial.end();
 #endif
+        sei();
         sleepArduino();
     }
 }
@@ -253,16 +254,28 @@ void wakeUp()
 
 void sleeping_state()
 {
-    detachInterrupt(0);
+    // Configure pin change interrupts for pins 2, 3, 4, and 5
+    PCMSK2 = (1 << PCINT18);  // Pin 2
+    PCMSK2 |= (1 << PCINT19); // Pin 3
+    PCMSK2 |= (1 << PCINT20); // Pin 4
+    PCMSK2 |= (1 << PCINT21); // Pin 5
+
+    // Enable Pin Change Interrupts
+    PCICR = (1 << PCIE2);
+
+    // Enable global interrupts
+    sei();
+    // detachInterrupt(0);
     reset_pulse();
     reset_board();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    //cli(); // Disable global interrupts
     sleep_enable();
-    attachInterrupt(0, wakeUp, RISING); // LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
+    // attachInterrupt(0, wakeUp, RISING); // LO 0 RIFERISCE L'INTERRUPT DEL PIN 2 DOV E ATTACCATO IL BT1
     sleep_mode();
     sleep_disable();
-    switch_game_state(INIT_GAME);
-    detachInterrupt(0);
+    cli();                   // Riabilita vecchi interrupt
+    // detachInterrupt(0);
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
