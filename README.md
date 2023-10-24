@@ -1,7 +1,7 @@
 # esiot-23-24-assignment1
 Assignment 1 for Embedded Systems and Internet of Things
 
-[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 # RESTORE THE LIGHTS
 
 The game board is based on 4 green leds L1, L2, L3, L4 and red led LS,
