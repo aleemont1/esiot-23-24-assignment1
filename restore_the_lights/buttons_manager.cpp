@@ -20,9 +20,10 @@ void init_buttons()
 
 int button_handler(const int B)
 {
-  if (B >= 0 && B <= N_LED)
+  if (B >= 0 && B < N_LED)
   {
-    delay(10);                   // Bouncing delay
+    delay(10); // Bouncing delay
     return digitalRead(BTNS[B]);
   }
+  return LOW;
 }

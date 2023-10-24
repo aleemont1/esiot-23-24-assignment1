@@ -282,10 +282,10 @@ static void reverse_pattern()
 {
     int start = 0;
     int end = N_LED - 1;
-    uint8_t temp;
 
     while (start < end)
     {
+        uint8_t temp;
         temp = PATTERN[start];
         PATTERN[start] = PATTERN[end];
         PATTERN[end] = temp;
