@@ -4,7 +4,8 @@
  * The game board is based on 4 green leds L1, L2, L3, L4 and red led LS,                               *
  * four tactile buttons B1, B2, B3, B4 and a potentiometer Pot, displaced in the following layout:      *
  *                                                                                                      *
- *                                                                                                      *
+ * https://imgur.com/a/ibcRWAC
+ *                                                                                                 *
  * During a game, the leds L1…L4 are initially all on. Then, after some random time T1,                 *
  * the leds start turning off, one by one in sequence, in some random order, taking some T2 time.       *
  * As soon as the last led is turned off, the player must turn on the leds in the reverse order by      *
