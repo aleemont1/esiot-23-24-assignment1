@@ -4,23 +4,23 @@
 #include "Arduino.h"
 #include "constants.h"
 
-void waitForClickSleeping()
-{
-  switch_game_state(GAME_STARTED_STATE);
-  detachInterrupt(0);
-}
+// void waitForClickSleeping()
+// {
+//   switch_game_state(GAME_STARTED_STATE);
+//   detachInterrupt(0);
+// }
 
-void waitForClick()
-{
-  switch_game_state(INITIAL_STATE);
-  detachInterrupt(0);
-  attachInterrupt(0, waitForClickSleeping, CHANGE); // ripristino l'interrupt in modo tale che ripassi all'iniziale
-}
+// void waitForClick()
+// {
+//   switch_game_state(INITIAL_STATE);
+//   detachInterrupt(0);
+//   attachInterrupt(0, waitForClickSleeping, CHANGE); // ripristino l'interrupt in modo tale che ripassi all'iniziale
+// }
 
-void interrupt_setup()
-{
-  attachInterrupt(0, waitForClick, CHANGE); // sul pin 2, metto interrupt
-}
+// void interrupt_setup()
+// {
+//   attachInterrupt(0, waitForClick, CHANGE); // sul pin 2, metto interrupt
+// }
 
 void init_buttons()
 {
@@ -31,7 +31,7 @@ void init_buttons()
     //digitalWrite(BTNS[i], LOW);
   }
 
-  interrupt_setup(); // abilita il primo comportamento dell'interrupt
+  //interrupt_setup(); // abilita il primo comportamento dell'interrupt
 }
 
 

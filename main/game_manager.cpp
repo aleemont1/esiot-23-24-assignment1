@@ -8,6 +8,8 @@
 #include "potentiometer_manager.h"
 #include <avr/sleep.h>
 
+#include <EnableInterrupt.h>
+
 int game_state = INIT_GAME;     // Stato attuale della partita
 long initial_time_in_state = 0; // Tempo all'inizio dello stato
 long elapsed_time_in_state = 0; // Tempo passato dall'inizio dello stato
@@ -93,21 +95,14 @@ void sleepArduino()
 
 void initial_state()
 {
-    /**Ristabilire vecchio comportamento dei buttons*/
-    PCMSK2 = 0;
-    // Disable Pin Change Interrupts
-    PCICR = 0;
-
-    // Reconfigure pins as digital inputs
-    pinMode(B1, INPUT);
-    pinMode(B2, INPUT);
-    pinMode(B3, INPUT);
-    pinMode(B4, INPUT);
-    sei(); // Re-enable global interrupts
-    
+    interrupts();
     pulse();
     readPotValue();
-
+    int start = button_handler(0);
+    if (start == HIGH)
+    {
+        switch_game_state(GAME_STARTED_STATE);
+    }
     if (elapsed_time_in_state > 5000)
     {
 #ifdef __DEBUG
@@ -249,15 +244,6 @@ void game_over()
     lose_animation();
 }
 
-void game_win()
-{
-    /**
-
-    TODO: vittoria
-
-     */
-}
-
 void wakeUp()
 {
     switch_game_state(INIT_GAME);
@@ -265,22 +251,38 @@ void wakeUp()
 
 void sleeping_state()
 {
-    // Configure pin change interrupts for pins 2, 3, 4, and 5
-    PCMSK2 = (1 << PCINT18);  // Pin 2
-    PCMSK2 |= (1 << PCINT19); // Pin 3
-    PCMSK2 |= (1 << PCINT20); // Pin 4
-    PCMSK2 |= (1 << PCINT21); // Pin 5
-
-    // Enable Pin Change Interrupts
-    PCICR = (1 << PCIE2);
-
-    sei();
+    // // Configure pin change interrupts for pins 2, 3, 4, and 5
+    // PCMSK2 = (1 << PCINT18);  // Pin 2
+    // PCMSK2 |= (1 << PCINT19); // Pin 3
+    // PCMSK2 |= (1 << PCINT20); // Pin 4
+    // PCMSK2 |= (1 << PCINT21); // Pin 5
+    enableInterrupt(B1, wakeUp, CHANGE);
+    enableInterrupt(B2, wakeUp, CHANGE);
+    enableInterrupt(B3, wakeUp, CHANGE);
+    enableInterrupt(B4, wakeUp, CHANGE);
+    interrupts();
     reset_pulse();
     reset_board();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
     sleep_mode();
     sleep_disable();
+    disableInterrupt(B1);
+    disableInterrupt(B2);
+    disableInterrupt(B3);
+    disableInterrupt(B4);
+    noInterrupts();
+    // EIMSK = 0b00000000;
+
+    // init_buttons();
+    /**Ristabilire vecchio comportamento dei buttons*/
+    // if (PCKMSK2 != 0 || PCICR != 0)
+    // {
+    //     PCMSK2 = 0;
+    //     PCICR = 0;      // Disable Pin Change Interrupts
+    //     sei();          // Re-enable global interrupts
+    //     init_buttons(); // Reconfigure pins as digital inputs
+    // }
 #ifdef __DEBUG
     Serial.begin(9600);
     Serial.println("Switching to state: SLEEPING_STATE.");
