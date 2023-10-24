@@ -1,31 +1,28 @@
-// LED manager, in this module all implementations of led_manager.h
+/*LED manager*/
 #include "Arduino.h"
 #include "led_manager.h"
 #include "constants.h"
 #include <time.h>
 
-void test_leds()
-{
-    for (int i = 0; i < N_LED; i++)
-    {
-        digitalWrite(leds[i], HIGH);
-        delay(300);
-        digitalWrite(leds[i], LOW);
-    }
-    for (int i = 0; i < N_LED; i++)
-    {
-        digitalWrite(leds[i], HIGH);
-    }
-    delay(1500);
-    for (int i = 0; i < N_LED; i++)
-    {
-        digitalWrite(leds[i], LOW);
-    }
-}
 
-/**
- * Inizializza la board di LED, settando i pin in OUTPUT mode.
- */
+void init_board();
+
+uint8_t *generate_led_pattern();
+
+void turn_off(const int LED);
+
+void turn_on(const int LED);
+
+void reset_board();
+
+void turn_on_board();
+
+void win_animation();
+
+void test_leds();
+
+/**Code implementation*/
+
 void init_board()
 {
     for (int i = 0; i < N_LED; i++)
@@ -33,14 +30,8 @@ void init_board()
         pinMode(leds[i], OUTPUT);
     }
     pinMode(LR, OUTPUT);
-    // pinMode(POT, INPUT);
 }
 
-/**
- * FIX: Genera sempre gli stessi pattern (quando resetti Arduino) in quanto Arduino non ha un RTC.
- * Permuta l'array leds. (Fisher-Yates shuffle algorithm modificato)
- * Returns: Una copia dell'array leds, permutata.
- */
 uint8_t *generate_led_pattern()
 {
     uint8_t *pattern = (uint8_t *)malloc(N_LED * sizeof(uint8_t));
@@ -48,14 +39,14 @@ uint8_t *generate_led_pattern()
 
     for (int i = 0; i < N_LED; i++)
     {
-        available[i] = i; // Indici disponibili (per evitare ripetizioni)
+        available[i] = i; // Available indexes (Avoid repetitions).
     }
 
     for (int i = 0; i < N_LED; i++)
     {
         unsigned int j = random(0, N_LED - i);
-        pattern[i] = leds[available[j]];         // Prendi un indice random tra quelli disponibili e assegnane il led corrispondente a pattern.
-        available[j] = available[N_LED - i - 1]; // Rimpiazza l'indice usato con l'ultimo indice disponibile.
+        pattern[i] = leds[available[j]];         // Take a random index and assign the corresponding LED.
+        available[j] = available[N_LED - i - 1]; // Swap used index with last available.
     }
 #ifdef __DEBUG
     Serial.begin(9600);
@@ -71,25 +62,16 @@ uint8_t *generate_led_pattern()
     return pattern;
 }
 
-/**
- * Spegne il LED verde indicato.
- */
 void turn_off(const int LED)
 {
     digitalWrite(LED, LOW);
 }
 
-/**
- * Accende il LED verde indicato.
- */
 void turn_on(const int LED)
 {
     digitalWrite(LED, HIGH);
 }
 
-/**
- * Spegne tutti i LED verdi.
- */
 void reset_board()
 {
     for (int i = 0; i < N_LED; i++)
@@ -98,9 +80,6 @@ void reset_board()
     }
 }
 
-/**
- * Accende tutti i LED verdi
- */
 void turn_on_board()
 {
     for (int i = 0; i < N_LED; i++)
@@ -124,5 +103,24 @@ void win_animation()
             delay(250);
             turn_off(leds[j]);
         }
+    }
+}
+
+void test_leds()
+{
+    for (int i = 0; i < N_LED; i++)
+    {
+        digitalWrite(leds[i], HIGH);
+        delay(300);
+        digitalWrite(leds[i], LOW);
+    }
+    for (int i = 0; i < N_LED; i++)
+    {
+        digitalWrite(leds[i], HIGH);
+    }
+    delay(1500);
+    for (int i = 0; i < N_LED; i++)
+    {
+        digitalWrite(leds[i], LOW);
     }
 }

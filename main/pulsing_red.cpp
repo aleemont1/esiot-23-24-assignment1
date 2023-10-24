@@ -1,4 +1,4 @@
-// Initial status (RED LED fading)
+/*Red LED manager*/
 #include "Arduino.h"
 #include "constants.h"
 #include "pulsing_red.h"
@@ -11,6 +11,13 @@
 unsigned int intensity = MIN_INT;
 int intensity_delta = INIT_DELTA;
 
+void pulse();
+
+void reset_pulse();
+
+void lose_animation();
+
+/**Code implementation**/
 void pulse()
 {
     analogWrite(LR, intensity);
@@ -32,6 +39,6 @@ void reset_pulse()
 void lose_animation()
 {
     analogWrite(LR, MAX_INT);
-    delay(1500);
+    delay(1000);
     analogWrite(LR, MIN_INT);
 }
