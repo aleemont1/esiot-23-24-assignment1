@@ -20,13 +20,13 @@
  ********************************************************************************************************/
 
 /**
- * Authors: Alessandro Monticelli, Davide Di Marco
+ * Authors: Alessandro Monticelli, Davide Di Marco.
  * Title: Restore the lights game.
  * Description: Assignment 01.
  * Course: Embedded Systems and IoT.
- * "Alma Mater Studiorum" - University of Bologna
+ * "Alma Mater Studiorum" - University of Bologna.
  * Professor: Alessandro Ricci.
- * License: CC BY-NC-SA 4.0 International (Attribution-NonCommercial-ShareAlike 4.0 International).
+ * License:  GNU LESSER GENERAL PUBLIC LICENSE Version 2.1.
  * GitHub: github.com/aleemont1/esiot-23-24-assignment1
  */
 
