@@ -96,11 +96,6 @@ void init_game()
     Serial.println("Welcome to the Catch the Led Pattern Game. Press Key B1 to Start");
     Serial.end();
 
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.println("Switching to state: INITIAL_STATE.");
-    Serial.end();
-#endif
     switch_game_state(INITIAL_STATE);
 }
 
@@ -116,11 +111,6 @@ void initial_state()
     }
     if (elapsed_time_in_state > MAX_TIMEOUT)
     {
-#ifdef __DEBUG
-        Serial.begin(9600);
-        Serial.println("Switching to state: SLEEPING_STATE.");
-        Serial.end();
-#endif
         switch_game_state(SLEEPING_STATE);
     }
 }
@@ -129,8 +119,8 @@ void game_started_state()
 {
     reset_pulse(); // Turn off Red LED
     reset_board(); // Turn off green LEDs
-
     turn_on_board(); // Turn on gred LEDs
+    
     delay(T1);       // Before starting to display pattern, wait T1.
     PATTERN = generate_led_pattern();
     Serial.begin(9600);
@@ -147,11 +137,6 @@ void game_started_state()
         delay(T2);            // Ogni LED si spegne dopo un tempo T2.
         turn_off(PATTERN[i]); // Spengo i LED secondo il pattern generato.
     }
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.println("Switching to state: INGAME_STATE.");
-    Serial.end();
-#endif
     switch_game_state(INGAME_STATE);
 }
 
@@ -231,11 +216,6 @@ void sleeping_state()
     sleep_disable();
     disable_interrupts();
     noInterrupts();
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.println("Switching to state: SLEEPING_STATE.");
-    Serial.end();
-#endif
 }
 
 void update_time()

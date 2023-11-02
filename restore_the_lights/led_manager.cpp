@@ -48,17 +48,6 @@ uint8_t *generate_led_pattern()
         pattern[i] = leds[available[j]];         // Take a random index and assign the corresponding LED.
         available[j] = available[N_LED - i - 1]; // Swap used index with last available.
     }
-#ifdef __DEBUG
-    Serial.begin(9600);
-    Serial.print("PATTERN: ");
-    for (int i = 0; i < N_LED; i++)
-    {
-        Serial.print(pattern[i]);
-        Serial.print(" ");
-    }
-    Serial.println();
-    Serial.end();
-#endif
     return pattern;
 }
 
